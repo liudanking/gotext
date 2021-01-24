@@ -15,3 +15,5 @@
 # vendor/
 
 Makefile
+cfg/*.json
+serve_dir
