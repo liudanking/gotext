@@ -6,7 +6,9 @@ import (
 )
 
 type Config struct {
-	ServeDir    string           `json:"serve_dir"`
+	ServeDir string `json:"serve_dir"`
+	// currently support baidu only
+	OCRPlatform string           `json:"ocr_platform"`
 	BaiduAIConf AppKeySecretConf `json:"baidu_ai_conf"`
 }
 

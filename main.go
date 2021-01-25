@@ -26,6 +26,7 @@ func main() {
 		log.Error("load config from file:[%s] failed:%v", configFile, err)
 		return
 	}
+	ocr.InitOCRer(config)
 
 	log.Notice("load config file OK, config:%+v", config)
 
@@ -115,7 +116,7 @@ func copyToClipboard(b []byte) error {
 }
 
 func GetOCRText(fn string) (string, error) {
-	content, err := ocr.GetOCRTextWithBaiduAI(fn)
+	content, err := ocr.GetOCRText(fn)
 	if err != nil {
 		log.Error("GetOCRTextWithBaiduAI failed:%v", err)
 		return "", err
