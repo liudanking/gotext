@@ -23,7 +23,7 @@ go get -u github.com/liudanking/gotext
 ```json
 {
   "serve_dir": "~/Downloads/gotextServeDir",
-  "trim_space": tru
+  "trim_space": true,
   "show_notify": true,
   "ocr_platform": "baidu",
   "baidu_ai_conf": {
