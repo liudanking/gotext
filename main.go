@@ -3,9 +3,12 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/gen2brain/beeep"
 
 	"github.com/liudanking/goutil/strutil"
 
@@ -66,7 +69,7 @@ func watchAndServe(serveDir string) error {
 					continue
 				}
 				// do ocr work
-				GetOCRText(fn)
+				GetOCRTextToClipboard(fn)
 			}
 		case err, ok := <-watcher.Errors:
 			if !ok {
@@ -115,14 +118,42 @@ func copyToClipboard(b []byte) error {
 	return cmd.Wait()
 }
 
-func GetOCRText(fn string) (string, error) {
+func GetOCRTextToClipboard(fn string) (string, error) {
 	content, err := ocr.GetOCRText(fn)
 	if err != nil {
 		log.Error("GetOCRTextWithBaiduAI failed:%v", err)
 		return "", err
 	}
 	log.Notice("[fn:%s][conent:%s]", fn, content)
+	content = postContentProcess(content)
 	copyToClipboard([]byte(content))
 	log.Info("copied to clipboard!")
+	postActionProcess(content, err)
 	return content, nil
+}
+
+// content post process after OCR
+func postContentProcess(content string) string {
+	if cfg.Get().TrimSpace {
+		content = strings.TrimSpace(content)
+	}
+
+	return content
+}
+
+// action post process after OCR
+func postActionProcess(content string, err error) {
+	if cfg.Get().ShowNotify {
+		if err != nil {
+			innerr := beeep.Notify("GoText Failed!", fmt.Sprintf("Reason:%v", err), "")
+			if innerr != nil {
+				log.Error("beeep notify failed:%v", err)
+			}
+		} else {
+			innerr := beeep.Notify("GoText Success!", "Content copied to clipboard", "")
+			if innerr != nil {
+				log.Error("beeep notify failed:%v", err)
+			}
+		}
+	}
 }
