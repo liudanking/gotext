@@ -45,7 +45,7 @@ func watchAndServe(serveDir string) error {
 		log.Error("create watcher failed:%v", err)
 		return err
 	}
-	// defer watcher.Close()
+	defer watcher.Close()
 
 	err = watcher.Add(serveDir)
 	if err != nil {
@@ -53,6 +53,7 @@ func watchAndServe(serveDir string) error {
 		return err
 	}
 
+	log.Notice("start serve dir [%s]", serveDir)
 	for {
 		select {
 		case event, ok := <-watcher.Events:
